@@ -1,0 +1,17 @@
+includes:
+  - ../../vendor/phpstan/phpstan-phpunit/extension.neon
+  - ../../vendor/phpstan/phpstan-strict-rules/rules.neon
+  - phpstan-baseline.neon
+
+parameters:
+  # Use local .cache dir instead of /tmp
+  tmpDir: ../../.cache/phpstan
+
+  level: max
+
+  paths:
+    - ../../Classes/
+    - ../../Tests/
+
+  excludePaths:
+    - ../../Tests/EndToEnd/*/Fixtures/*

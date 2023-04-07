@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron:  '56 4 * * *'
+
+jobs:
+  code-quality:
+    name: code-quality
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        php: [ '8.1', '8.2' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install testing system
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerUpdate
+
+      - name: Lint PHP
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s lint
+
+      - name: Static code analyzer
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s phpstan
+
+      - name: CGL
+        if: ${{ matrix.php <= '8.1' }}
+        run: Build/Scripts/runTests.sh -n -p ${{ matrix.php }} -s cgl
+  
+  unit:
+    name: unit
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        php: [ '8.1', '8.2' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install testing system
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerUpdate
+
+      - name: Unit Tests
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
+
+  end-to-end:
+    name: end-to-end
+    runs-on: ubuntu-20.04
+    strategy:
+      # This prevents cancellation of matrix job runs, if one/two already failed and let the
+      # rest matrix jobs be executed anyway.
+      fail-fast: false
+      matrix:
+        php: [ '8.1', '8.2' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install testing system
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerUpdate
+
+      - name: Unit Tests
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s endToEnd
