@@ -45,6 +45,16 @@
 
   <extensions>
     <bootstrap class="SBUERK\PHPUnitHardening\Extension">
+      <!--
+        Possible options for convert* parameters:
+          * none: do nothing
+          * exitcode: only ensure non-zero exitcode, if error occurred
+          * convert: convert to specific error exceptions
+      -->
+      <parameter name="convertDeprecationsToExceptions" value="convert"/>
+      <parameter name="convertNoticesToExceptions" value="convert"/>
+      <parameter name="convertWarningsToExceptions" value="convert"/>
+      <parameter name="convertErrorsToExceptions" value="convert"/>
     </bootstrap>
   </extensions>
 
